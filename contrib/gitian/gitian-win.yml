@@ -35,12 +35,12 @@ alternatives:
   package: "x86_64-w64-mingw32-gcc"
   path: "/usr/bin/x86_64-w64-mingw32-gcc-posix"
 remotes:
-- "url": "https://github.com/monero-project/monero.git"
+- "url": "https://github.com/nevocoin/nevocoin.git"
   "dir": "monero"
 files: []
 script: |
   WRAP_DIR=$HOME/wrapped
-  HOSTS="i686-w64-mingw32 x86_64-w64-mingw32"
+  HOSTS="x86_64-w64-mingw32"
   FAKETIME_HOST_PROGS="windres objcopy"
   FAKETIME_PROGS="date zip"
   HOST_CFLAGS="-O2 -g"

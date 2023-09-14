@@ -299,12 +299,7 @@ namespace nodetool
     virtual void clear_used_stripe_peers();
 
   private:
-    const std::vector<std::string> m_seed_nodes_list =
-    { "seeds.moneroseeds.se"
-    , "seeds.moneroseeds.ae.org"
-    , "seeds.moneroseeds.ch"
-    , "seeds.moneroseeds.li"
-    };
+    const std::vector<std::string> m_seed_nodes_list = {}; // MoneroPulse
 
     bool islimitup=false;
     bool islimitdown=false;

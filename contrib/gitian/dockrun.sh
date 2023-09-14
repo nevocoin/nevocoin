@@ -41,10 +41,9 @@ RUN useradd -ms /bin/bash -U ubuntu -G docker
 USER ubuntu:docker
 WORKDIR $WORKDIR
 
-RUN	git clone https://github.com/monero-project/gitian.sigs.git sigs; \
-  git clone https://github.com/devrandom/gitian-builder.git builder; \
+RUN git clone https://github.com/devrandom/gitian-builder.git builder; \
   cd builder; git checkout c0f77ca018cb5332bfd595e0aff0468f77542c23; mkdir -p inputs var; cd inputs; \
-  git clone https://github.com/monero-project/monero
+  git clone https://github.com/nevocoin/nevocoin
 
 CMD ["sleep", "infinity"]
 EOF
@@ -107,22 +106,3 @@ if [ "$check" != "sign" ]; then
 	echo "Not signing, bye."
 	exit 1
 fi
-
-if [ ! -d sigs ]; then
-	git clone https://github.com/monero-project/gitian.sigs.git sigs
-	cd sigs
-	git remote add $GH_USER git@github.com:$GH_USER/gitian.sigs.git
-	cd ..
-fi
-
-DIRS=`docker exec gitrun sh -c "echo sigs/$VERSION-*"`
-for i in $DIRS; do
-	docker cp gitrun:$WORKDIR/$i sigs
-	gpg --detach-sign $i/$GH_USER/*.assert
-done
-
-cd sigs
-git checkout -b $VERSION
-git add $VERSION-*
-git commit -S -m "Add $GH_USER $VERSION"
-git push --set-upstream $GH_USER $VERSION

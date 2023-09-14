@@ -9,7 +9,7 @@
 	url = https://github.com/trezor/trezor-common.git
 [submodule "external/randomx"]
 	path = external/randomx
-	url = https://github.com/tevador/RandomX
+	url = https://github.com/nevocoin/RandomX
 [submodule "external/supercop"]
 	path = external/supercop
 	url = https://github.com/monero-project/supercop

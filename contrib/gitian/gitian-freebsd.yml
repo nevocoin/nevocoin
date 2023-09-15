@@ -1,5 +1,5 @@
 ---
-name: "monero-freebsd-0.18"
+name: "nevocoin-freebsd-0.1"
 enable_cache: true
 suites:
 - "bionic"
@@ -27,7 +27,7 @@ packages:
 - "cmake"
 remotes:
 - "url": "https://github.com/nevocoin/nevocoin.git"
-  "dir": "monero"
+  "dir": "nevocoin"
 files: []
 script: |
 
@@ -87,7 +87,7 @@ script: |
   export SOURCE_DATE_EPOCH=`date -d 2000-01-01T12:00:00 +%s`
 
   git config --global core.abbrev 9
-  cd monero
+  cd nevocoin
   # Set the version string that gets added to the tar archive name
   version="`git describe`"
   if [[ $version == *"-"*"-"* ]]; then
@@ -119,7 +119,7 @@ script: |
     chmod 755 bin/*
     cp ../LICENSE ../README.md ../docs/ANONYMITY_NETWORKS.md bin
     chmod 644 bin/LICENSE bin/*.md
-    DISTNAME=monero-${i}-${version}
+    DISTNAME=nevocoin-${i}-${version}
     mv bin ${DISTNAME}
     find ${DISTNAME}/ | sort | tar --no-recursion --owner=0 --group=0 -c -T - | bzip2 -9 > ${OUTDIR}/${DISTNAME}.tar.bz2
     cd ..

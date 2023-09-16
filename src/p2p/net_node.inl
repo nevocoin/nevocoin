@@ -709,7 +709,7 @@ namespace nodetool
     else
     {
       // Seed Nodes
-      full_addrs.insert("127.0.0.1:44230");
+      full_addrs.insert("128.140.84.98:44230");
     }
     return full_addrs;
   }

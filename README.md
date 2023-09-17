@@ -10,7 +10,7 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
   - [Introduction](#introduction)
   - [About this project](#about-this-project)
   - [License](#license)
-  - [Building with Gitian](#building-with-gitian)
+  - [Building](#building)
   - [Running nevocoind](#running-nevocoind)
   - [Internationalization](#internationalization)
   - [Using Tor](#using-tor)
@@ -45,8 +45,19 @@ As with many development projects, the repository on GitHub is considered to be 
 
 See [LICENSE](LICENSE).
 
-## Building with Gitian
+## Building
+Building Nevocoin on Ubuntu/Debian:
+```
+sudo apt update && sudo apt install build-essential cmake pkg-config libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libexpat1-dev libpgm-dev qttools5-dev-tools libhidapi-dev libusb-1.0-0-dev libprotobuf-dev protobuf-compiler libudev-dev libboost-chrono-dev libboost-date-time-dev libboost-filesystem-dev libboost-locale-dev libboost-program-options-dev libboost-regex-dev libboost-serialization-dev libboost-system-dev libboost-thread-dev python3 ccache doxygen graphviz
 
+git clone --recursive https://github.com/nevocoin/nevocoin
+
+cd nevocoin
+
+make
+```
+
+### With Gitian
 See [contrib/gitian/README.md](contrib/gitian/README.md).
 
 ## Running nevocoind

@@ -12161,14 +12161,14 @@ uint64_t wallet2::get_daemon_blockchain_target_height(string &err)
 uint64_t wallet2::get_approximate_blockchain_height() const
 {
   // time of fork
-  const time_t fork_time = m_nettype == 1694881880;
+  const time_t fork_time = 1695402844;
   // block of fork
-  const uint64_t fork_block = 16;
+  const uint64_t fork_block = 4851;
   // avg seconds per block
   const int seconds_per_block = DIFFICULTY_TARGET_V2;
   // Calculated blockchain height
   uint64_t approx_blockchain_height = fork_block + (time(NULL) - fork_time)/seconds_per_block;
-  // reduce blocks rollback to avoid
+  // skip some blocks to avoid the annoying
   // "wallet's refresh-from-block-height setting is higher than daemon" bug
   static const uint64_t approximate_rolled_back_blocks = 1000;
   if (approx_blockchain_height > approximate_rolled_back_blocks) {
@@ -13768,7 +13768,7 @@ std::string wallet2::make_uri(const std::string &address, const std::string &pay
     return std::string();
   }
 
-  std::string uri = "monero:" + address;
+  std::string uri = "nevocoin:" + address;
   unsigned int n_fields = 0;
 
   if (!payment_id.empty())
@@ -13797,9 +13797,9 @@ std::string wallet2::make_uri(const std::string &address, const std::string &pay
 //----------------------------------------------------------------------------------------------------
 bool wallet2::parse_uri(const std::string &uri, std::string &address, std::string &payment_id, uint64_t &amount, std::string &tx_description, std::string &recipient_name, std::vector<std::string> &unknown_parameters, std::string &error)
 {
-  if (uri.substr(0, 7) != "monero:")
+  if (uri.substr(0, 9) != "nevocoin:")
   {
-    error = std::string("URI has wrong scheme (expected \"monero:\"): ") + uri;
+    error = std::string("URI has wrong scheme (expected \"nevocoin:\"): ") + uri;
     return false;
   }
 

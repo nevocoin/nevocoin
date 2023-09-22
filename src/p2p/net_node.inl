@@ -2066,7 +2066,7 @@ namespace nodetool
         else
         {
           const el::Level level = el::Level::Warning;
-          MCLOG_RED(level, "global", "No incoming connections - check firewalls/routers allow port " << get_this_peer_port());
+          MCLOG_YELLOW(level, "global", "No incoming connections - check firewalls/routers allow port " << get_this_peer_port());
         }
       }
     }

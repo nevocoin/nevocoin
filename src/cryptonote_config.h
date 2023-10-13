@@ -198,7 +198,7 @@
 #define BULLETPROOF_PLUS_MAX_OUTPUTS            16
 
 #define CRYPTONOTE_PRUNING_STRIPE_SIZE          4096 // the smaller, the smoother the increase
-#define CRYPTONOTE_PRUNING_LOG_STRIPES          8 // the higher, the more space saved
+#define CRYPTONOTE_PRUNING_LOG_STRIPES          7    // the higher, the more space saved
 #define CRYPTONOTE_PRUNING_TIP_BLOCKS           5500 // the smaller, the more space saved
 
 #define RPC_CREDITS_PER_HASH_SCALE ((float)(1<<24))

@@ -709,8 +709,9 @@ namespace nodetool
     else
     {
       // Seed Nodes
-      full_addrs.insert("128.140.84.98:44230");
-      full_addrs.insert("82.153.138.234:44230");
+      full_addrs.insert("128.140.84.98:44230"); // nevocoin.org
+      full_addrs.insert("82.153.138.140:44230"); // nevo.kilopool.com
+      full_addrs.insert("23.184.48.31:44230"); // mynevocoin.com
     }
     return full_addrs;
   }

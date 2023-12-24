@@ -43,11 +43,6 @@ void GetHeight::Request::fromJson(const rapidjson::Value& val)
 
 void GetHeight::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest) const
 {
-  if (!val.IsObject())
-  {
-    throw json::WRONG_TYPE("json object");
-  }
-
   INSERT_INTO_JSON_OBJECT(dest, height, height);
 }
 

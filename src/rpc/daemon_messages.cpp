@@ -43,11 +43,21 @@ void GetHeight::Request::fromJson(const rapidjson::Value& val)
 
 void GetHeight::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest) const
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   INSERT_INTO_JSON_OBJECT(dest, height, height);
 }
 
 void GetHeight::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, height, height);
 }
 
@@ -61,6 +71,11 @@ void GetBlocksFast::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest
 
 void GetBlocksFast::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, block_ids, block_ids);
   GET_FROM_JSON_OBJECT(val, start_height, start_height);
   GET_FROM_JSON_OBJECT(val, prune, prune);
@@ -76,6 +91,11 @@ void GetBlocksFast::Response::doToJson(rapidjson::Writer<epee::byte_stream>& des
 
 void GetBlocksFast::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, blocks, blocks);
   GET_FROM_JSON_OBJECT(val, start_height, start_height);
   GET_FROM_JSON_OBJECT(val, current_height, current_height);
@@ -91,6 +111,11 @@ void GetHashesFast::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest
 
 void GetHashesFast::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, known_hashes, known_hashes);
   GET_FROM_JSON_OBJECT(val, start_height, start_height);
 }
@@ -104,6 +129,11 @@ void GetHashesFast::Response::doToJson(rapidjson::Writer<epee::byte_stream>& des
 
 void GetHashesFast::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, hashes, hashes);
   GET_FROM_JSON_OBJECT(val, start_height, start_height);
   GET_FROM_JSON_OBJECT(val, current_height, current_height);
@@ -117,6 +147,11 @@ void GetTransactions::Request::doToJson(rapidjson::Writer<epee::byte_stream>& de
 
 void GetTransactions::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, tx_hashes, tx_hashes);
 }
 
@@ -128,6 +163,11 @@ void GetTransactions::Response::doToJson(rapidjson::Writer<epee::byte_stream>& d
 
 void GetTransactions::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, txs, txs);
   GET_FROM_JSON_OBJECT(val, missed_hashes, missed_hashes);
 }
@@ -150,6 +190,11 @@ void KeyImagesSpent::Response::doToJson(rapidjson::Writer<epee::byte_stream>& de
 
 void KeyImagesSpent::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+  
   GET_FROM_JSON_OBJECT(val, spent_status, spent_status);
 }
 
@@ -161,6 +206,11 @@ void GetTxGlobalOutputIndices::Request::doToJson(rapidjson::Writer<epee::byte_st
 
 void GetTxGlobalOutputIndices::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, tx_hash, tx_hash);
 }
 
@@ -171,6 +221,11 @@ void GetTxGlobalOutputIndices::Response::doToJson(rapidjson::Writer<epee::byte_s
 
 void GetTxGlobalOutputIndices::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, output_indices, output_indices);
 }
 
@@ -182,6 +237,11 @@ void SendRawTx::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest) co
 
 void SendRawTx::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, tx, tx);
   GET_FROM_JSON_OBJECT(val, relay, relay);
 }
@@ -194,6 +254,11 @@ void SendRawTx::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest) c
 
 void SendRawTx::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, relayed, relayed);
 }
 
@@ -205,6 +270,11 @@ void SendRawTxHex::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest)
 
 void SendRawTxHex::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, tx_as_hex, tx_as_hex);
   GET_FROM_JSON_OBJECT(val, relay, relay);
 }
@@ -219,6 +289,11 @@ void StartMining::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest) 
 
 void StartMining::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, miner_address, miner_address);
   GET_FROM_JSON_OBJECT(val, threads_count, threads_count);
   GET_FROM_JSON_OBJECT(val, do_background_mining, do_background_mining);
@@ -266,6 +341,11 @@ void MiningStatus::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest
 
 void MiningStatus::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, active, active);
   GET_FROM_JSON_OBJECT(val, speed, speed);
   GET_FROM_JSON_OBJECT(val, threads_count, threads_count);
@@ -288,6 +368,11 @@ void GetInfo::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest) con
 
 void GetInfo::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, info, info);
 }
 
@@ -314,6 +399,11 @@ void GetBlockHash::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest)
 
 void GetBlockHash::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, height, height);
 }
 
@@ -324,6 +414,11 @@ void GetBlockHash::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest
 
 void GetBlockHash::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, hash, hash);
 }
 
@@ -342,6 +437,11 @@ void GetLastBlockHeader::Response::doToJson(rapidjson::Writer<epee::byte_stream>
 
 void GetLastBlockHeader::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, header, header);
 }
 
@@ -353,6 +453,11 @@ void GetBlockHeaderByHash::Request::doToJson(rapidjson::Writer<epee::byte_stream
 
 void GetBlockHeaderByHash::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, hash, hash);
 }
 
@@ -363,6 +468,11 @@ void GetBlockHeaderByHash::Response::doToJson(rapidjson::Writer<epee::byte_strea
 
 void GetBlockHeaderByHash::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, header, header);
 }
 
@@ -374,6 +484,11 @@ void GetBlockHeaderByHeight::Request::doToJson(rapidjson::Writer<epee::byte_stre
 
 void GetBlockHeaderByHeight::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, height, height);
 }
 
@@ -384,6 +499,11 @@ void GetBlockHeaderByHeight::Response::doToJson(rapidjson::Writer<epee::byte_str
 
 void GetBlockHeaderByHeight::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, header, header);
 }
 
@@ -395,6 +515,11 @@ void GetBlockHeadersByHeight::Request::doToJson(rapidjson::Writer<epee::byte_str
 
 void GetBlockHeadersByHeight::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, heights, heights);
 }
 
@@ -405,6 +530,11 @@ void GetBlockHeadersByHeight::Response::doToJson(rapidjson::Writer<epee::byte_st
 
 void GetBlockHeadersByHeight::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, headers, headers);
 }
 
@@ -424,6 +554,11 @@ void GetPeerList::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest)
 
 void GetPeerList::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, white_list, white_list);
   GET_FROM_JSON_OBJECT(val, gray_list, gray_list);
 }
@@ -436,6 +571,11 @@ void SetLogLevel::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest) 
 
 void SetLogLevel::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, level, level);
 }
 
@@ -462,6 +602,11 @@ void GetTransactionPool::Response::doToJson(rapidjson::Writer<epee::byte_stream>
 
 void GetTransactionPool::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, transactions, transactions);
   GET_FROM_JSON_OBJECT(val, key_images, key_images);
 }
@@ -474,6 +619,11 @@ void HardForkInfo::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest)
 
 void HardForkInfo::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, version, version);
 }
 
@@ -484,6 +634,11 @@ void HardForkInfo::Response::doToJson(rapidjson::Writer<epee::byte_stream>& dest
 
 void HardForkInfo::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, info, info);
 }
 
@@ -499,6 +654,11 @@ void GetOutputHistogram::Request::doToJson(rapidjson::Writer<epee::byte_stream>&
 
 void GetOutputHistogram::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, amounts, amounts);
   GET_FROM_JSON_OBJECT(val, min_count, min_count);
   GET_FROM_JSON_OBJECT(val, max_count, max_count);
@@ -513,6 +673,11 @@ void GetOutputHistogram::Response::doToJson(rapidjson::Writer<epee::byte_stream>
 
 void GetOutputHistogram::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, histogram, histogram);
 }
 
@@ -524,6 +689,11 @@ void GetOutputKeys::Request::doToJson(rapidjson::Writer<epee::byte_stream>& dest
 
 void GetOutputKeys::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, outputs, outputs);
 }
 
@@ -534,6 +704,11 @@ void GetOutputKeys::Response::doToJson(rapidjson::Writer<epee::byte_stream>& des
 
 void GetOutputKeys::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, keys, keys);
 }
 
@@ -552,6 +727,11 @@ void GetRPCVersion::Response::doToJson(rapidjson::Writer<epee::byte_stream>& des
 
 void GetRPCVersion::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, version, version);
 }
 
@@ -562,6 +742,11 @@ void GetFeeEstimate::Request::doToJson(rapidjson::Writer<epee::byte_stream>& des
 
 void GetFeeEstimate::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, num_grace_blocks, num_grace_blocks);
 }
 
@@ -575,6 +760,11 @@ void GetFeeEstimate::Response::doToJson(rapidjson::Writer<epee::byte_stream>& de
 
 void GetFeeEstimate::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, estimated_base_fee, estimated_base_fee);
   GET_FROM_JSON_OBJECT(val, fee_mask, fee_mask);
   GET_FROM_JSON_OBJECT(val, size_scale, size_scale);
@@ -591,6 +781,11 @@ void GetOutputDistribution::Request::doToJson(rapidjson::Writer<epee::byte_strea
 
 void GetOutputDistribution::Request::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, amounts, amounts);
   GET_FROM_JSON_OBJECT(val, from_height, from_height);
   GET_FROM_JSON_OBJECT(val, to_height, to_height);
@@ -605,6 +800,11 @@ void GetOutputDistribution::Response::doToJson(rapidjson::Writer<epee::byte_stre
 
 void GetOutputDistribution::Response::fromJson(const rapidjson::Value& val)
 {
+  if (!val.IsObject())
+  {
+    throw json::WRONG_TYPE("json object");
+  }
+
   GET_FROM_JSON_OBJECT(val, status, status);
   GET_FROM_JSON_OBJECT(val, distributions, distributions);
 }

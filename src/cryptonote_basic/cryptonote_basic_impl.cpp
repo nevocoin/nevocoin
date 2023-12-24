@@ -94,7 +94,9 @@ namespace cryptonote {
       return true;
     }
 
-    uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+    const uint64_t money_supply = already_generated_coins >= MONEY_SUPPLY/4 ? MONEY_SUPPLY/2 : MONEY_SUPPLY;
+
+    uint64_t base_reward = (money_supply - already_generated_coins) >> emission_speed_factor;
     if (base_reward < FINAL_SUBSIDY_PER_MINUTE*target_minutes)
     {
       base_reward = FINAL_SUBSIDY_PER_MINUTE*target_minutes;

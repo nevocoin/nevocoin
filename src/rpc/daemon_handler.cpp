@@ -895,6 +895,10 @@ namespace rpc
     header.minor_version = b.minor_version;
     header.timestamp = b.timestamp;
     header.nonce = b.nonce;
+    if (b.major_version >= HF_VERSION_NOTARY)
+    {
+      header.signature = b.signature;
+    }
     header.prev_id = b.prev_id;
 
     header.depth = m_core.get_current_blockchain_height() - header.height - 1;

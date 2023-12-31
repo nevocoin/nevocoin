@@ -70,6 +70,9 @@ const hardfork_t testnet_hard_forks[] = {
   { 14, 14, 0, 1598180818 },
   { 15, 15, 0, 1656629117 },
   { 16, 16, 0, 1656629118 },
+
+  // version 17 is the Notary Hard-Fork
+  { 17, 17, 0, 1656629119 },
 };
 const size_t num_testnet_hard_forks = sizeof(testnet_hard_forks) / sizeof(testnet_hard_forks[0]);
 const uint64_t testnet_hard_fork_version_1_till = 4;
@@ -91,5 +94,8 @@ const hardfork_t stagenet_hard_forks[] = {
   { 14, 65, 0, 1598180818 },
   { 15, 70, 0, 1656629117 },
   { 16, 75, 0, 1656629118 },
+
+  // version 17 is the Notary Hard-Fork
+  { 17, 17, 0, 1656629119 },
 };
 const size_t num_stagenet_hard_forks = sizeof(stagenet_hard_forks) / sizeof(stagenet_hard_forks[0]);

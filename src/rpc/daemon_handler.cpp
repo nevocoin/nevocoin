@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2017-2023, The Monero Project
 // 
 // All rights reserved.

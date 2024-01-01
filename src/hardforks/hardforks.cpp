@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 //
 // All rights reserved.
@@ -49,6 +50,9 @@ const hardfork_t mainnet_hard_forks[] = {
   { 14, 14, 0, 1598180818 },
   { 15, 15, 0, 1656629117 },
   { 16, 16, 0, 1656629118 },
+
+  // version 17 (Notary Hard-Fork) starts from block 87435, which is on or around the 15th of January, 2024. Fork time finalised on 2024-01-01
+  { 17, 87434, 0, 1705338000 },
 };
 const size_t num_mainnet_hard_forks = sizeof(mainnet_hard_forks) / sizeof(mainnet_hard_forks[0]);
 const uint64_t mainnet_hard_fork_version_1_till = 4;
@@ -70,6 +74,9 @@ const hardfork_t testnet_hard_forks[] = {
   { 14, 14, 0, 1598180818 },
   { 15, 15, 0, 1656629117 },
   { 16, 16, 0, 1656629118 },
+
+  // version 17 is the Notary Hard-Fork
+  { 17, 17, 0, 1656629119 },
 };
 const size_t num_testnet_hard_forks = sizeof(testnet_hard_forks) / sizeof(testnet_hard_forks[0]);
 const uint64_t testnet_hard_fork_version_1_till = 4;
@@ -91,5 +98,8 @@ const hardfork_t stagenet_hard_forks[] = {
   { 14, 65, 0, 1598180818 },
   { 15, 70, 0, 1656629117 },
   { 16, 75, 0, 1656629118 },
+
+  // version 17 is the Notary Hard-Fork
+  { 17, 17, 0, 1656629119 },
 };
 const size_t num_stagenet_hard_forks = sizeof(stagenet_hard_forks) / sizeof(stagenet_hard_forks[0]);

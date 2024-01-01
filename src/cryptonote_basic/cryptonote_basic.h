@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 // 
 // All rights reserved.
@@ -459,8 +460,9 @@ namespace cryptonote
     uint8_t major_version;
     uint8_t minor_version;  // now used as a voting mechanism, rather than how this particular block is built
     uint64_t timestamp;
-    crypto::hash  prev_id;
+    crypto::hash prev_id;
     uint32_t nonce;
+    crypto::signature signature;
 
     BEGIN_SERIALIZE()
       VARINT_FIELD(major_version)
@@ -468,6 +470,9 @@ namespace cryptonote
       VARINT_FIELD(timestamp)
       FIELD(prev_id)
       FIELD(nonce)
+      if(major_version >= HF_VERSION_NOTARY) {
+        FIELD(signature)
+      }
     END_SERIALIZE()
   };
 

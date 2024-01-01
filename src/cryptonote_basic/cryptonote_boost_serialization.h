@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 // 
 // All rights reserved.
@@ -196,6 +197,10 @@ namespace boost
     a & b.timestamp;
     a & b.prev_id;
     a & b.nonce;
+    if (b.major_version >= HF_VERSION_NOTARY)
+    {
+      a & b.signature;
+    }
     //------------------
     a & b.miner_tx;
     a & b.tx_hashes;

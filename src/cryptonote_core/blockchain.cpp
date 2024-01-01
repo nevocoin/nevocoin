@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 //
 // All rights reserved.
@@ -2000,38 +2001,79 @@ bool Blockchain::handle_alternative_block(const block& b, const crypto::hash& id
     // Check the block's hash against the difficulty target for its alt chain
     difficulty_type current_diff = get_next_difficulty_for_alternative_chain(alt_chain, bei);
     CHECK_AND_ASSERT_MES(current_diff, false, "!!!!!!! DIFFICULTY OVERHEAD !!!!!!!");
-    crypto::hash proof_of_work;
-    memset(proof_of_work.data, 0xff, sizeof(proof_of_work.data));
-    if (b.major_version >= RX_BLOCK_VERSION)
+
+    bool is_notary_block = b.major_version >= HF_VERSION_NOTARY && bei.height%NOTARY_INTERVAL == 0;
+    bool invalid_notary_signature = true;
+
+    // notarized blocks
+    if (is_notary_block)
     {
-      crypto::hash seedhash = null_hash;
-      uint64_t seedheight = rx_seedheight(bei.height);
-      // seedblock is on the alt chain somewhere
-      if (alt_chain.size() && alt_chain.front().height <= seedheight)
+      // sanity checks
+      if (b.miner_tx.vout.size() != 1)
       {
-        for (auto it=alt_chain.begin(); it != alt_chain.end(); it++)
-        {
-          if (it->height == seedheight+1)
-          {
-            seedhash = it->bl.prev_id;
-            break;
-          }
-        }
-      } else
-      {
-        seedhash = get_block_id_by_height(seedheight);
+        MWARNING("Only 1 output in notary transaction allowed");
+        goto checkpow;
       }
-      get_altblock_longhash(bei.bl, proof_of_work, seedhash);
-    } else
-    {
-      get_block_longhash(this, bei.bl, proof_of_work, bei.height, 0);
+      if (!check_output_types(b.miner_tx, hf_version))
+      {
+        MWARNING("Wrong txout type");
+        goto checkpow;
+      }
+      // check notary signature
+      crypto::hash sig_data = get_sig_data(b);
+      crypto::signature signature = b.signature;
+
+      cryptonote::address_parse_info notary_info;
+      cryptonote::get_account_address_from_str(notary_info, m_nettype, config::NOTARY_ADDRESS);
+
+      crypto::public_key spend_public_key = notary_info.address.m_spend_public_key;
+
+      if (!crypto::check_signature(sig_data, spend_public_key, signature))
+      {
+        LOG_PRINT_L1("Notary signature is invalid");
+        goto checkpow;
+      }
+      LOG_PRINT_L1("Notary signature is valid");
+      invalid_notary_signature = false;
     }
-    if(!check_hash(proof_of_work, current_diff))
-    {
-      MERROR_VER("Block with id: " << id << std::endl << " for alternative chain, does not have enough proof of work: " << proof_of_work << std::endl << " expected difficulty: " << current_diff);
-      bvc.m_verifivation_failed = true;
-      bvc.m_bad_pow = true;
-      return false;
+
+checkpow:
+    if (invalid_notary_signature) {
+      crypto::hash proof_of_work;
+      memset(proof_of_work.data, 0xff, sizeof(proof_of_work.data));
+      if (b.major_version >= RX_BLOCK_VERSION) {
+        crypto::hash seedhash = null_hash;
+        uint64_t seedheight = rx_seedheight(bei.height);
+        // seedblock is on the alt chain somewhere
+        if (alt_chain.size() && alt_chain.front().height <= seedheight) {
+          for (auto it=alt_chain.begin(); it != alt_chain.end(); it++)
+          {
+            if (it->height == seedheight+1)
+            {
+              seedhash = it->bl.prev_id;
+              break;
+            }
+          }
+        } else {
+          seedhash = get_block_id_by_height(seedheight);
+        }
+        get_altblock_longhash(bei.bl, proof_of_work, seedhash);
+      } else {
+        get_block_longhash(this, bei.bl, proof_of_work, bei.height, 0);
+      }
+      difficulty_type actual_diff = current_diff;
+      if (is_notary_block) {
+        LOG_PRINT_L2("invalid_notary_signature, diff:  " << actual_diff);
+        actual_diff *= NOTARY_DIFF_MULTIPLIER;
+        LOG_PRINT_L2("invalid_notary_signature, diff2: " << actual_diff);
+      }
+
+      if(!check_hash(proof_of_work, actual_diff)) {
+        MERROR_VER("Block with id: " << id << std::endl << " for alternative chain, does not have enough proof of work: " << proof_of_work << std::endl << " expected difficulty: " << current_diff);
+        bvc.m_verifivation_failed = true;
+        bvc.m_bad_pow = true;
+        return false;
+      }
     }
 
     if(!prevalidate_miner_transaction(b, bei.height, hf_version))
@@ -2133,7 +2175,7 @@ bool Blockchain::handle_alternative_block(const block& b, const crypto::hash& id
     }
     else
     {
-      MGINFO_BLUE("----- BLOCK ADDED AS ALTERNATIVE ON HEIGHT " << bei.height << std::endl << "id:\t" << id << std::endl << "PoW:\t" << proof_of_work << std::endl << "difficulty:\t" << current_diff);
+      MGINFO_BLUE("----- BLOCK ADDED AS ALTERNATIVE ON HEIGHT " << bei.height << std::endl << "id:\t" << id << std::endl << std::endl << "difficulty:\t" << current_diff);
       return true;
     }
   }
@@ -4215,7 +4257,45 @@ leave:
     }
   }
 #endif
-  if (!fast_check)
+
+  bool is_notary_block = hf_version >= HF_VERSION_NOTARY && blockchain_height%NOTARY_INTERVAL == 0;
+  bool invalid_notary_signature = true;
+
+  // notarized blocks
+  if (is_notary_block)
+  {
+    // sanity checks
+    if (bl.miner_tx.vout.size() != 1)
+    {
+      MWARNING("Only 1 output in notary transaction allowed");
+      goto checkpow;
+    }
+    if (!check_output_types(bl.miner_tx, hf_version))
+    {
+      MWARNING("Wrong txout type");
+      goto checkpow;
+    }
+    // check notary signature
+    crypto::hash sig_data = get_sig_data(bl);
+    crypto::signature signature = bl.signature;
+
+    cryptonote::address_parse_info notary_info;
+    cryptonote::get_account_address_from_str(notary_info, m_nettype, config::NOTARY_ADDRESS);
+
+    crypto::public_key spend_public_key = notary_info.address.m_spend_public_key;
+
+    if (!crypto::check_signature(sig_data, spend_public_key, signature))
+    {
+      LOG_PRINT_L1("Notary signature is invalid");
+      goto checkpow;
+    }
+    LOG_PRINT_L1("Notary signature is valid");
+    invalid_notary_signature = false;
+  }
+
+checkpow:
+
+  if (!fast_check && invalid_notary_signature)
   {
     auto it = m_blocks_longhash_table.find(id);
     if (it != m_blocks_longhash_table.end())
@@ -4226,8 +4306,16 @@ leave:
     else
       proof_of_work = get_block_longhash(this, bl, blockchain_height, 0);
 
+    difficulty_type actual_diff = current_diffic;
+
+    if (is_notary_block) {
+        LOG_PRINT_L2("invalid_notary_signature, diff:  " << actual_diff);
+        actual_diff *= NOTARY_DIFF_MULTIPLIER;
+        LOG_PRINT_L2("invalid_notary_signature, diff2: " << actual_diff);
+    }
+
     // validate proof_of_work versus difficulty target
-    if(!check_hash(proof_of_work, current_diffic))
+    if(!check_hash(proof_of_work, actual_diff))
     {
       MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << " at height " << blockchain_height << ", unexpected difficulty: " << current_diffic);
       bvc.m_verifivation_failed = true;

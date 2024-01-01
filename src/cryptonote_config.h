@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 // 
 // All rights reserved.
@@ -183,6 +184,14 @@
 #define HF_VERSION_BULLETPROOF_PLUS             15
 #define HF_VERSION_VIEW_TAGS                    15
 #define HF_VERSION_2021_SCALING                 15
+#define HF_VERSION_NOTARY                       17
+
+#define NOTARY_INTERVAL                         4 // 1 out of 4 blocks are notary blocks
+
+// a notary block can also be found by PoW miners, in that case, required block difficulty is multiplied by NOTARY_DIFF_MULTIPLIER
+// and difficulty accounted in cumulative is the same as other blocks, so in practice a chain without notarized blocks is possible,
+// but it must have a much higher hashrate in order to have a higher cumulative difficulty
+#define NOTARY_DIFF_MULTIPLIER                  4
 
 #define NUM_MIXIN                               15
 #define PRE_MINED_COINS                         1000000 * COIN
@@ -254,6 +263,8 @@ namespace config
   const constexpr char HASH_KEY_MULTISIG_TX_PRIVKEYS[] = "multisig_tx_privkeys";
   const constexpr char HASH_KEY_TXHASH_AND_MIXRING[] = "txhash_and_mixring";
 
+  const std::string NOTARY_ADDRESS = "Ne2errKNs9xLvt1UGR2wvUXWzY7Nf27TE5S79RF4sJnn8FSmRCWo4QZDK2YQ1tuxW7CYR17rTSaMzEHdFSsJpGjL38tjVaCyw";
+
   // Multisig
   const uint32_t MULTISIG_MAX_SIGNERS{16};
 
@@ -270,6 +281,8 @@ namespace config
       } }; // Bender's daydream
     std::string const GENESIS_TX = "013c01ff0001ffffffffffff03029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1";
     uint32_t const GENESIS_NONCE = 10001;
+  
+    const std::string NOTARY_ADDRESS = "";
   }
 
   namespace stagenet
@@ -285,6 +298,8 @@ namespace config
       } }; // Bender's daydream
     std::string const GENESIS_TX = "013c01ff0001ffffffffffff0302df5d56da0c7d643ddd1ce61901c7bdc5fb1738bfe39fbe69c28a3a7032729c0f2101168d0c4ca86fb55a4cf6a36d31431be1c53a3bd7411bb24e8832410289fa6f3b";
     uint32_t const GENESIS_NONCE = 10002;
+
+    const std::string NOTARY_ADDRESS = "";
   }
 }
 

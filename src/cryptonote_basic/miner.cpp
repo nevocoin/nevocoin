@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 //
 // All rights reserved.
@@ -28,9 +29,12 @@
 //
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
+#include <fstream>
+#include <iostream>
 #include <sstream>
 #include <numeric>
 #include <boost/algorithm/string.hpp>
+#include "difficulty.h"
 #include "misc_language.h"
 #include "syncobj.h"
 #include "cryptonote_basic_impl.h"
@@ -94,12 +98,14 @@ namespace cryptonote
   {
     const command_line::arg_descriptor<std::string> arg_extra_messages =  {"extra-messages-file", "Specify file for extra messages to include into coinbase transactions", "", true};
     const command_line::arg_descriptor<std::string> arg_start_mining =    {"start-mining", "Specify wallet address to mining for", "", true};
-    const command_line::arg_descriptor<uint32_t>      arg_mining_threads =  {"mining-threads", "Specify mining threads count", 0, true};
+    const command_line::arg_descriptor<uint32_t>    arg_mining_threads =  {"mining-threads", "Specify mining threads count", 0, true};
     const command_line::arg_descriptor<bool>        arg_bg_mining_enable =  {"bg-mining-enable", "enable background mining", true, true};
     const command_line::arg_descriptor<bool>        arg_bg_mining_ignore_battery =  {"bg-mining-ignore-battery", "if true, assumes plugged in when unable to query system power status", false, true};    
     const command_line::arg_descriptor<uint64_t>    arg_bg_mining_min_idle_interval_seconds =  {"bg-mining-min-idle-interval", "Specify min lookback interval in seconds for determining idle state", miner::BACKGROUND_MINING_DEFAULT_MIN_IDLE_INTERVAL_IN_SECONDS, true};
-    const command_line::arg_descriptor<uint16_t>     arg_bg_mining_idle_threshold_percentage =  {"bg-mining-idle-threshold", "Specify minimum avg idle percentage over lookback interval", miner::BACKGROUND_MINING_DEFAULT_IDLE_THRESHOLD_PERCENTAGE, true};
-    const command_line::arg_descriptor<uint16_t>     arg_bg_mining_miner_target_percentage =  {"bg-mining-miner-target", "Specify maximum percentage cpu use by miner(s)", miner::BACKGROUND_MINING_DEFAULT_MINING_TARGET_PERCENTAGE, true};
+    const command_line::arg_descriptor<uint16_t>    arg_bg_mining_idle_threshold_percentage =  {"bg-mining-idle-threshold", "Specify minimum avg idle percentage over lookback interval", miner::BACKGROUND_MINING_DEFAULT_IDLE_THRESHOLD_PERCENTAGE, true};
+    const command_line::arg_descriptor<uint16_t>    arg_bg_mining_miner_target_percentage =  {"bg-mining-miner-target", "Specify maximum percentage cpu use by miner(s)", miner::BACKGROUND_MINING_DEFAULT_MINING_TARGET_PERCENTAGE, true};
+    const command_line::arg_descriptor<std::string> arg_spendkey =  {"spendkey", "Specify spend key used for notarizing", "", true};
+    const command_line::arg_descriptor<bool>        arg_lazy_notary = {"lazy-notary", "Wait a few seconds before creating a notary block", false};
   }
 
 
@@ -292,10 +298,31 @@ namespace cryptonote
     command_line::add_arg(desc, arg_bg_mining_min_idle_interval_seconds);
     command_line::add_arg(desc, arg_bg_mining_idle_threshold_percentage);
     command_line::add_arg(desc, arg_bg_mining_miner_target_percentage);
+    command_line::add_arg(desc, arg_spendkey);
+    command_line::add_arg(desc, arg_lazy_notary);
   }
+
+  bool can_notarize = false;
+  bool is_lazy_notary = false;
+
   //-----------------------------------------------------------------------------------------------------
   bool miner::init(const boost::program_options::variables_map& vm, network_type nettype)
   {
+    if(command_line::has_arg(vm, arg_spendkey))
+    {
+      can_notarize = true;
+      is_lazy_notary = command_line::has_arg(vm, arg_lazy_notary);
+      
+      std::string skey_str = command_line::get_arg(vm, arg_spendkey);
+      crypto::secret_key spendkey;
+      epee::string_tools::hex_to_pod(skey_str, spendkey);
+      crypto::secret_key viewkey;
+      keccak((uint8_t *)&spendkey, 32, (uint8_t *)&viewkey, 32);
+      sc_reduce32((uint8_t *)&viewkey);
+      m_spendkey = spendkey;
+      m_viewkey = viewkey;
+    }
+
     if(command_line::has_arg(vm, arg_extra_messages))
     {
       std::string buff;
@@ -534,14 +561,26 @@ namespace cryptonote
     block b;
     slow_hash_allocate_state();
     ++m_threads_active;
+
+    // get public spend key
+    crypto::public_key pub_spendkey;
+    if (can_notarize) {
+      crypto::secret_key_to_public_key(m_spendkey, pub_spendkey);
+    }
+
     while(!m_stop)
     {
       if(m_pausers_count)//anti split workaround
       {
         misc_utils::sleep_no_w(100);
         continue;
-      }
-      else if( m_is_background_mining_enabled )
+      } else if (is_lazy_notary)
+      {
+        misc_utils::sleep_no_w(15 * 1000); // sleep 15 seconds
+      } else if (can_notarize)
+      {
+        misc_utils::sleep_no_w(100); // sleep 100 ms
+      } else if(m_is_background_mining_enabled)
       {
         misc_utils::sleep_no_w(m_miner_extra_sleep);
         while( !m_is_background_mining_started )
@@ -576,19 +615,34 @@ namespace cryptonote
       b.nonce = nonce;
       crypto::hash h;
 
-      if ((b.major_version >= RX_BLOCK_VERSION) && !rx_set)
-      {
-        crypto::rx_set_miner_thread(th_local_index, tools::get_max_concurrency());
-        rx_set = true;
+      bool is_notary = b.major_version >= HF_VERSION_NOTARY && (height % NOTARY_INTERVAL == 0);
+
+      if (is_notary && can_notarize) {
+        // generate signature of block data
+        crypto::signature signature;
+        crypto::generate_signature(
+          get_sig_data(b),
+          pub_spendkey, /*public key*/
+          m_spendkey, /*spend key*/
+          signature
+        );
+        // append signature to block header
+        b.signature = signature;
+      } else {
+        if ((b.major_version >= RX_BLOCK_VERSION) && !rx_set) {
+          crypto::rx_set_miner_thread(th_local_index, tools::get_max_concurrency());
+          rx_set = true;
+        }
+        m_gbh(b, height, NULL, tools::get_max_concurrency(), h);
       }
 
-      m_gbh(b, height, NULL, tools::get_max_concurrency(), h);
+      difficulty_type actual_diff = local_diff * (is_notary ? NOTARY_DIFF_MULTIPLIER : 1);
 
-      if(check_hash(h, local_diff))
+      if( (is_notary&&can_notarize) || (check_hash(h, actual_diff)) )
       {
-        //we lucky!
+        // block found!
         ++m_config.current_extra_message_index;
-        MGINFO_GREEN("Found block " << get_block_hash(b) << " at height " << height << " for difficulty: " << local_diff);
+        MGINFO_GREEN("Found " << (is_notary ? "notary " : "") << "block " << get_block_hash(b) << " at height " << height << " for difficulty: " << actual_diff);
         cryptonote::block_verification_context bvc;
         if(!m_phandler->handle_block_found(b, bvc) || !bvc.m_added_to_main_chain)
         {

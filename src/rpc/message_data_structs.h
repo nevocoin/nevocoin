@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2016-2023, The Monero Project
 // 
 // All rights reserved.
@@ -162,8 +163,9 @@ namespace rpc
     uint64_t major_version;
     uint64_t minor_version;
     uint64_t timestamp;
-    crypto::hash  prev_id;
+    crypto::hash prev_id;
     uint32_t nonce;
+    crypto::signature signature;
     uint64_t height;
     uint64_t depth;
     crypto::hash hash;

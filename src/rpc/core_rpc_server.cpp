@@ -1,3 +1,4 @@
+// Copyright (c) 2023-2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 // 
 // All rights reserved.
@@ -1983,6 +1984,9 @@ namespace cryptonote
     }
 
     res.reserved_offset = reserved_offset;
+    if (b.major_version > HF_VERSION_NOTARY && res.height % NOTARY_INTERVAL == 0) {
+      wdiff *= NOTARY_DIFF_MULTIPLIER;
+    }
     store_difficulty(wdiff, res.difficulty, res.wide_difficulty, res.difficulty_top64);
     blobdata block_blob = t_serializable_object_to_blob(b);
     blobdata hashing_blob = get_block_hashing_blob(b);
@@ -2294,6 +2298,10 @@ namespace cryptonote
         return false;
       }
       b.nonce = req.starting_nonce;
+      if (b.major_version >= HF_VERSION_NOTARY)
+      {
+        b.signature = {};
+      }
       crypto::hash seed_hash = crypto::null_hash;
       if (b.major_version >= RX_BLOCK_VERSION && !epee::string_tools::hex_to_pod(template_res.seed_hash, seed_hash))
       {

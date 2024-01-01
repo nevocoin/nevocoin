@@ -49,6 +49,9 @@ const hardfork_t mainnet_hard_forks[] = {
   { 14, 14, 0, 1598180818 },
   { 15, 15, 0, 1656629117 },
   { 16, 16, 0, 1656629118 },
+
+  // version 17 (Notary Hard-Fork) starts from block 87435, which is on or around the 15th of January, 2024. Fork time finalised on 2024-01-01
+  { 17, 87434, 0, 1705338000 },
 };
 const size_t num_mainnet_hard_forks = sizeof(mainnet_hard_forks) / sizeof(mainnet_hard_forks[0]);
 const uint64_t mainnet_hard_fork_version_1_till = 4;

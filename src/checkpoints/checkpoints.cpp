@@ -1,3 +1,4 @@
+// Copyright (c) 2024, The Nevocoin developers
 // Copyright (c) 2014-2023, The Monero Project
 //
 // All rights reserved.
@@ -201,6 +202,8 @@ namespace cryptonote
     ADD_CHECKPOINT2(25000, "597d335a2df660fe25e0203af903b653b9d6978a7afaed1d561ef1262ad48240", "0x17ff64222cf7");
     ADD_CHECKPOINT2(40000, "9fb1abff448cf72214a490d0e5bbefcd8acab652cca385e570136f8f6c0aaa97", "0x268730ca4b50");
     ADD_CHECKPOINT2(55000, "56997f55e3ca8509daacaf2029a163603bb956bb087d299fa91fe6ac16280ded", "0x56d50f49781c");
+    ADD_CHECKPOINT2(75000, "08493ad002e01ffc16eec107b6675d61f02769aa2bee021596ab92e62ac1d186", "0xa3a9a7707296");
+    ADD_CHECKPOINT2(90000, "8864cde9a028aca4f1dc862911f69fde90a526a94e1acece86898c7de6c7b04e", "0xc374d8f967d3");
     return true;
   }
 
